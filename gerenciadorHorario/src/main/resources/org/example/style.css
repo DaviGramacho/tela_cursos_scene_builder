@@ -1,0 +1,43 @@
+.table-view .column-header .label {
+    -fx-alignment: center-left;
+    -fx-padding: 0 0 0 10; /* margem da esquerda */
+}
+
+.table-view .column-header .label {
+    -fx-alignment: CENTER-LEFT;
+}
+
+.table-view {
+    -fx-table-cell-border-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell {
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.table-column {
+    -fx-border-color: transparent;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-control-inner-background: white;
+    -fx-padding: 10;
+    -fx-table-cell-border-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+
+
+.table-column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.root {
+    -fx-font-family: 'Segoe UI';
+}
