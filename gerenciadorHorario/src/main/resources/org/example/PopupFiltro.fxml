@@ -10,8 +10,23 @@
 
 <AnchorPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.PopupFiltroController">
     <children>
-        <ComboBox fx:id="comboTurno" layoutX="75.0" layoutY="50.0" prefWidth="150.0" promptText="Escolha o Turno" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" />
-        <Button fx:id="btnAplicar" layoutX="105.0" layoutY="110.0" mnemonicParsing="false" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-background-radius: 50; -fx-border-radius: 50;" text="Aplicar" textFill="#0400ff">
+        <!-- ComboBox para escolher o turno -->
+        <ComboBox fx:id="comboTurno" layoutX="75.0" layoutY="50.0" prefWidth="150.0" promptText="Escolha o Turno"
+                  style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" />
+
+        <!-- Botão Aplicar -->
+        <Button fx:id="btnAplicar" layoutX="45.0" layoutY="110.0" mnemonicParsing="false"
+                style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-background-radius: 50; -fx-border-radius: 50;"
+                text="Aplicar" textFill="#0400ff">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Button>
+
+        <!-- Botão Limpar -->
+        <Button fx:id="btnLimpar" layoutX="155.0" layoutY="110.0" mnemonicParsing="false"
+                style="-fx-background-color: #ffffff; -fx-border-color: #ff0000; -fx-background-radius: 50; -fx-border-radius: 50;"
+                text="Limpar" textFill="#ff0000">
             <font>
                 <Font name="System Bold" size="12.0" />
             </font>

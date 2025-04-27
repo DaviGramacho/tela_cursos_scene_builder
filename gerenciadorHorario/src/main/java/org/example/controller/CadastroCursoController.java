@@ -2,7 +2,11 @@ package org.example.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -10,11 +14,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import java.io.IOException;
 import org.example.classes.Curso;
+
+import java.io.IOException;
 
 public class CadastroCursoController {
 
@@ -33,54 +35,43 @@ public class CadastroCursoController {
     @FXML
     private TableColumn<Curso, String> tblPeriodo;
 
-    // Lista observável para armazenar os cursos
     private final ObservableList<Curso> cursos = FXCollections.observableArrayList();
+    private final FilteredList<Curso> cursosFiltrados = new FilteredList<>(cursos, p -> true);
 
-    public void mouseEntrou(MouseEvent mouseEvent) {
-        ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: #eaf2ff;");
-    }
+    private String filtroAtual = "";
 
-    public void mouseSaiu(MouseEvent mouseEvent) {
-        ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: transparent;");
-    }
-
-
-    /**
-     * Inicializa a tela e configura a tabela.
-     */
     @FXML
     public void initialize() {
-        // Configuração da coluna de seleção
+        configurarTabela();
+        carregarCursosIniciais();
+    }
+
+    private void configurarTabela() {
         tblSelecionarCurso.setCellValueFactory(cellData -> cellData.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
-
-        // Configuração das outras colunas
 
         tblIdCurso.setCellValueFactory(new PropertyValueFactory<>("id"));
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tblPeriodo.setCellValueFactory(new PropertyValueFactory<>("periodo"));
 
-        // Adiciona cursos de exemplo
+        tblViewCurso.setItems(cursosFiltrados);
+    }
+
+    private void carregarCursosIniciais() {
         cursos.addAll(
                 new Curso(false, 1, "Análise e Desenvolvimento de Sistemas", "Matutino"),
                 new Curso(false, 2, "Banco de Dados", "Noturno"),
                 new Curso(false, 3, "Desenvolvimento de Software Multiplataforma", "Matutino")
         );
 
-        // Atribui a lista de cursos à TableView
-        tblViewCurso.setItems(cursos);
-
-        cursos.forEach(curso -> {
-            curso.selecionadoProperty().addListener((obs, oldVal, newVal) -> {
-                String status = newVal ? "selecionada" : "desmarcada";
-                System.out.println("Caixa " + status + " para o curso: " + curso.getNome());
-            });
-        });
+        // Se quiser deixar para debug apenas, comente ou remova depois
+        cursos.forEach(curso ->
+                curso.selecionadoProperty().addListener((obs, oldVal, newVal) ->
+                        System.out.println("Curso " + curso.getNome() + " " + (newVal ? "selecionado" : "deselecionado"))
+                )
+        );
     }
 
-    /**
-     * Abre um popup para adicionar um novo curso.
-     */
     @FXML
     private void abrirPopupCurso() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupCurso.fxml"));
@@ -97,15 +88,11 @@ public class CadastroCursoController {
             String nomeCurso = popupController.getCursoSelecionado();
             String turnoCurso = popupController.getTurnoSelecionado();
 
-            // Cria e adiciona o novo curso
             Curso novoCurso = new Curso(false, cursos.size() + 1, nomeCurso, turnoCurso);
             cursos.add(novoCurso);
         }
     }
 
-    /**
-     * Abre um popup para filtrar os cursos por período.
-     */
     @FXML
     private void abrirPopupFiltro() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupFiltro.fxml"));
@@ -119,36 +106,43 @@ public class CadastroCursoController {
 
         PopupFiltroController popupController = loader.getController();
         if (popupController.isConfirmado()) {
-            String turnoSelecionado = popupController.getTurnoSelecionado();
-
-            // Filtra os cursos de acordo com o turno selecionado
-            ObservableList<Curso> cursosFiltrados = FXCollections.observableArrayList();
-            for (Curso curso : cursos) {
-                if (curso.getPeriodo().equals(turnoSelecionado) || curso.getPeriodo().contains(turnoSelecionado)) {
-                    cursosFiltrados.add(curso);
-                }
+            if (popupController.isLimparFiltro()) {
+                // Se clicou em "Limpar", remove o filtro
+                filtroAtual = "";
+                cursosFiltrados.setPredicate(curso -> true); // Mostra todos
+            } else {
+                String turnoSelecionado = popupController.getTurnoSelecionado();
+                aplicarFiltro(turnoSelecionado);
             }
-
-            tblViewCurso.setItems(cursosFiltrados);
         }
     }
 
-    /**
-     * Exclui os cursos selecionados.
-     */
+    private void aplicarFiltro(String turnoSelecionado) {
+        filtroAtual = turnoSelecionado.toLowerCase();
+        cursosFiltrados.setPredicate(curso ->
+                filtroAtual.isEmpty() || curso.getPeriodo().toLowerCase().contains(filtroAtual)
+        );
+    }
+
     @FXML
     private void deletarCursosSelecionados() {
-        ObservableList<Curso> cursosSelecionados = FXCollections.observableArrayList();
-        for (Curso curso : cursos) {
-            if (curso.isSelecionado()) {
-                cursosSelecionados.add(curso);
-            }
+        cursos.removeIf(Curso::isSelecionado);
+
+        // Atualiza o filtro, se existir
+        if (!filtroAtual.isEmpty()) {
+            cursosFiltrados.setPredicate(curso ->
+                    curso.getPeriodo().toLowerCase().contains(filtroAtual)
+            );
         }
+    }
 
-        // Remove os cursos selecionados da lista principal
-        cursos.removeAll(cursosSelecionados);
+    @FXML
+    private void mouseEntrou(MouseEvent mouseEvent) {
+        ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: #eaf2ff;");
+    }
 
-        // Atualiza a tabela
-        tblViewCurso.refresh();
+    @FXML
+    private void mouseSaiu(MouseEvent mouseEvent) {
+        ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: transparent;");
     }
 }
