@@ -1,22 +1,13 @@
 package org.example.classes;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 public class Curso {
-
-    // ====== Aqui estavam faltando ======
     private final BooleanProperty selecionado = new SimpleBooleanProperty(false);
     private final IntegerProperty id = new SimpleIntegerProperty();
     private final StringProperty nome = new SimpleStringProperty();
     private final StringProperty periodo = new SimpleStringProperty();
-    // ====================================
 
-    // Construtor
     public Curso(boolean selecionado, int id, String nome, String periodo) {
         this.selecionado.set(selecionado);
         this.id.set(id);

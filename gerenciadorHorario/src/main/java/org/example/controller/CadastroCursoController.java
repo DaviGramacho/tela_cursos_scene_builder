@@ -8,14 +8,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Region;
 import javafx.scene.input.MouseEvent;
+import javafx.util.converter.IntegerStringConverter;
 import org.example.classes.Curso;
 
 public class CadastroCursoController {
 
+
     @FXML
-    private Button btnAdicionarAula;
+    private Button btnAdicionarCurso;
 
     @FXML
     private Button btnCoordenador;
@@ -57,26 +60,40 @@ public class CadastroCursoController {
 
     private final ObservableList<Curso> cursos = FXCollections.observableArrayList();
 
-    // Método para alterar a cor ao passar o mouse
     public void mouseEntrou(MouseEvent mouseEvent) {
         ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: #eaf2ff;");
     }
 
-    // Método para voltar a cor ao sair do mouse
     public void mouseSaiu(MouseEvent mouseEvent) {
         ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: transparent;");
     }
 
     @FXML
     public void initialize() {
-        // Corrigir isso:
+        // Configuração da tabela
+        tblViewCurso.setEditable(true);
+        tblSelecionarCurso.setEditable(true); // Apenas a coluna da CheckBox é editável
+
+        // Desabilitar edição para colunas de texto
+        tblIdCurso.setEditable(false);
+        tblNomeCurso.setEditable(false);
+        tblPeriodo.setEditable(false);
+
+        // Configurar coluna da CheckBox
         tblSelecionarCurso.setCellValueFactory(cellData -> cellData.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
 
+        // Configurar colunas de texto
         tblIdCurso.setCellValueFactory(new PropertyValueFactory<>("id"));
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tblPeriodo.setCellValueFactory(new PropertyValueFactory<>("periodo"));
 
+        // Garantir exibição correta do texto
+        tblIdCurso.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        tblNomeCurso.setCellFactory(TextFieldTableCell.forTableColumn());
+        tblPeriodo.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        // Adicionar cursos
         cursos.addAll(
                 new Curso(false, 1, "Análise e Desenvolvimento de Sistemas", "Matutino"),
                 new Curso(false, 2, "Banco de Dados", "Noturno"),
@@ -88,6 +105,26 @@ public class CadastroCursoController {
         );
 
         tblViewCurso.setItems(cursos);
+
+        // Listener para log no console
+        cursos.forEach(curso -> {
+            curso.selecionadoProperty().addListener((obs, oldVal, newVal) -> {
+                String status = newVal ? "selecionada" : "desmarcada";
+                System.out.println("Caixa " + status + " para o curso: " + curso.getNome());
+            });
+        });
+
+        btnDeletar.setOnAction(event -> deletarCursosSelecionados());
+
     }
 
+    private void deletarCursosSelecionados() {
+        // Criar uma cópia da lista para evitar ConcurrentModificationException
+        ObservableList<Curso> cursosParaRemover = cursos.filtered(Curso::isSelecionado);
+
+        // Remover todos os cursos selecionados
+        cursos.removeAll(cursosParaRemover);
+
+        System.out.println(cursosParaRemover.size() + " curso(s) removido(s) com sucesso!");
+    }
 }

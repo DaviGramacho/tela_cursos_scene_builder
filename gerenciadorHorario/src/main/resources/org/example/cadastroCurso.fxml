@@ -240,10 +240,10 @@
         </HBox>
         <TableView fx:id="tblViewCurso" layoutX="238.0" layoutY="154.0" prefHeight="298.0" prefWidth="1132.0" style="-fx-background-color: white;">
             <columns>
-                <TableColumn fx:id="tblSelecionarCurso" prefWidth="43.0" text="-" />
-                <TableColumn fx:id="tblIdCurso" prefWidth="143.0" text="ID Curso" />
-                <TableColumn fx:id="tblNomeCurso" minWidth="0.0" prefWidth="420.0" text="Nome do Curso" />
-            <TableColumn fx:id="tblPeriodo" prefWidth="467.20001220703125" text="Período" />
+                <TableColumn fx:id="tblSelecionarCurso" prefWidth="43.0" style="-fx-text-fill: #333333FF;" text="-" />
+                <TableColumn fx:id="tblIdCurso" prefWidth="143.0" style="-fx-text-fill: #333333FF;" text="ID Curso" />
+                <TableColumn fx:id="tblNomeCurso" minWidth="0.0" prefWidth="420.0" style="-fx-text-fill: #333333FF;" text="Nome do Curso" />
+            <TableColumn fx:id="tblPeriodo" prefWidth="467.20001220703125" style="-fx-text-fill: #333333FF;" text="Período" />
             <TableColumn minWidth="0.0" prefWidth="91.99997558593759" />
             </columns>
         </TableView>

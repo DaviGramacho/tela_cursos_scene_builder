@@ -41,3 +41,31 @@
 .root {
     -fx-font-family: 'Segoe UI';
 }
+
+/* Remover seleção azul e linhas */
+.table-row-cell:filled:selected,
+.table-row-cell:filled:selected:hover {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.table-view:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.table-row-cell:filled:focused:selected {
+    -fx-background-color: transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Desabilitar seleção de linha */
+.table-view .table-row-cell {
+    -fx-selection-bar: transparent;
+}
+
+/* Ajuste para CheckBox alinhada */
+.check-box-table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 10;
+}
