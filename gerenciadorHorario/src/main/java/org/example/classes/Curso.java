@@ -1,75 +1,58 @@
 package org.example.classes;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 public class Curso {
+    private final BooleanProperty selecionado;
+    private final IntegerProperty id;
+    private final StringProperty nome;
+    private final StringProperty periodo;
 
-    // ====== Aqui estavam faltando ======
-    private final BooleanProperty selecionado = new SimpleBooleanProperty(false);
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty nome = new SimpleStringProperty();
-    private final StringProperty periodo = new SimpleStringProperty();
-    // ====================================
-
-    // Construtor
     public Curso(boolean selecionado, int id, String nome, String periodo) {
-        this.selecionado.set(selecionado);
-        this.id.set(id);
-        this.nome.set(nome);
-        this.periodo.set(periodo);
-    }
-
-    // Getters e Setters
-    public BooleanProperty selecionadoProperty() {
-        return selecionado;
+        this.selecionado = new SimpleBooleanProperty(selecionado);
+        this.id = new SimpleIntegerProperty(id);
+        this.nome = new SimpleStringProperty(nome);
+        this.periodo = new SimpleStringProperty(periodo);
     }
 
     public boolean isSelecionado() {
         return selecionado.get();
     }
 
-    public void setSelecionado(boolean selecionado) {
-        this.selecionado.set(selecionado);
+    public BooleanProperty selecionadoProperty() {
+        return selecionado;
     }
 
-    public IntegerProperty idProperty() {
-        return id;
+    public void setSelecionado(boolean selecionado) {
+        this.selecionado.set(selecionado);
     }
 
     public int getId() {
         return id.get();
     }
 
-    public void setId(int id) {
-        this.id.set(id);
-    }
-
-    public StringProperty nomeProperty() {
-        return nome;
+    public IntegerProperty idProperty() {
+        return id;
     }
 
     public String getNome() {
         return nome.get();
     }
 
-    public void setNome(String nome) {
-        this.nome.set(nome);
-    }
-
-    public StringProperty periodoProperty() {
-        return periodo;
+    public StringProperty nomeProperty() {
+        return nome;
     }
 
     public String getPeriodo() {
         return periodo.get();
     }
 
-    public void setPeriodo(String periodo) {
-        this.periodo.set(periodo);
+    public StringProperty periodoProperty() {
+        return periodo;
     }
 }

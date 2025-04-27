@@ -239,13 +239,12 @@
                 </ImageView>
             </children>
         </HBox>
-        <TableView fx:id="tblViewCurso" layoutX="238.0" layoutY="154.0" prefHeight="298.0" prefWidth="1132.0" style="-fx-background-color: white;">
+        <TableView fx:id="tblViewCurso" layoutX="238.0" layoutY="154.0" prefHeight="298.0" prefWidth="1132.0" style="-fx-background-color: white;" editable="true">
             <columns>
                 <TableColumn fx:id="tblSelecionarCurso" prefWidth="43.0" text="-" />
                 <TableColumn fx:id="tblIdCurso" prefWidth="143.0" text="ID Curso" />
                 <TableColumn fx:id="tblNomeCurso" minWidth="0.0" prefWidth="420.0" text="Nome do Curso" />
-            <TableColumn fx:id="tblPeriodo" prefWidth="467.20001220703125" text="Período" />
-            <TableColumn minWidth="0.0" prefWidth="91.99997558593759" />
+                <TableColumn fx:id="tblPeriodo" prefWidth="467.20001220703125" text="Período" />
             </columns>
         </TableView>
     </children>
