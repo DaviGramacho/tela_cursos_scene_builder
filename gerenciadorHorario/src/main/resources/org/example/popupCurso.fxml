@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="267.0" prefWidth="412.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.PopupCursoController">
+   <children>
+
+      <ComboBox fx:id="comboTurno" layoutX="105.0" layoutY="108.0" prefWidth="150.0" promptText="Escolha o Turno" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50; -fx-text-fill: white; -fx-prompt-text-fill: white;" />
+
+      <ComboBox fx:id="comboCurso" layoutX="105.0" layoutY="68.0" prefWidth="150.0" promptText="Escolha o Curso" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" />
+
+      <Button fx:id="btnConfirmar" layoutX="104.0" layoutY="163.0" mnemonicParsing="false" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-background-radius: 50; -fx-border-radius: 50;" text="Confirmar" textFill="#0400ff">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+
+      <Button fx:id="BtnCancelar" layoutX="187.0" layoutY="163.0" mnemonicParsing="false" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-background-radius: 50; -fx-border-radius: 50;" text="Cancelar" textFill="#0400ff">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+
+      <ImageView fx:id="imgSinapspopup" fitHeight="48.0" fitWidth="53.0" layoutX="31.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@img/perfil.png" />
+         </image>
+      </ImageView>
+
+   </children>
+</AnchorPane>

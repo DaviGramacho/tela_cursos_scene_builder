@@ -3,6 +3,7 @@ package org.example.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -11,6 +12,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Region;
 import javafx.scene.input.MouseEvent;
 import org.example.classes.Curso;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.io.IOException;
 
 public class CadastroCursoController {
 
@@ -46,12 +52,16 @@ public class CadastroCursoController {
 
     @FXML
     private TableView<Curso> tblViewCurso;
+
     @FXML
     private TableColumn<Curso, Boolean> tblSelecionarCurso;
+
     @FXML
     private TableColumn<Curso, Integer> tblIdCurso;
+
     @FXML
     private TableColumn<Curso, String> tblNomeCurso;
+
     @FXML
     private TableColumn<Curso, String> tblPeriodo;
 
@@ -69,7 +79,7 @@ public class CadastroCursoController {
 
     @FXML
     public void initialize() {
-        // Corrigir isso:
+        // Configuração da TableView
         tblSelecionarCurso.setCellValueFactory(cellData -> cellData.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
 
@@ -77,6 +87,7 @@ public class CadastroCursoController {
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tblPeriodo.setCellValueFactory(new PropertyValueFactory<>("periodo"));
 
+        // Adiciona cursos de exemplo
         cursos.addAll(
                 new Curso(false, 1, "Análise e Desenvolvimento de Sistemas", "Matutino"),
                 new Curso(false, 2, "Banco de Dados", "Noturno"),
@@ -87,7 +98,60 @@ public class CadastroCursoController {
                 new Curso(false, 7, "Manufatura Avançada", "Matutino")
         );
 
+        // Atribui a lista de cursos à TableView
         tblViewCurso.setItems(cursos);
     }
 
+    @FXML
+    private void abrirPopupCurso() throws IOException {
+        // Carrega o FXML do PopupCurso
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupCurso.fxml"));
+        Parent root = loader.load(); // Aqui, você carrega o FXML uma vez
+
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Adicionar Curso");
+
+        // Carrega a cena do FXML usando o 'root' já carregado
+        Scene scene = new Scene(root);
+        popupStage.setScene(scene);
+
+        // Faz o popup ser modal (impede interação com a janela principal enquanto o popup estiver aberto)
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+
+        // Mostra o popup
+        popupStage.showAndWait();
+
+        // Depois que o popup fechar, verifica se a ação foi confirmada
+        PopupCursoController popupController = loader.getController();
+        if (popupController.isConfirmado()) {  // Verifica se a ação foi confirmada
+            String nomeCurso = popupController.getCursoSelecionado();
+            String turnoCurso = popupController.getTurnoSelecionado();
+
+            // Cria e adiciona o novo curso
+            Curso novoCurso = new Curso(false, cursos.size() + 1, nomeCurso, turnoCurso);
+            cursos.add(novoCurso);
+        }
+    }
+
+    @FXML
+    private void deletarCursosSelecionados() {
+        // Cria uma lista para armazenar os cursos a serem removidos
+        ObservableList<Curso> cursosSelecionados = FXCollections.observableArrayList();
+
+        // Itera pela lista de cursos e adiciona à lista de deletar os cursos que estão com a checkbox marcada
+        for (Curso curso : tblViewCurso.getItems()) {
+            if (curso.isSelecionado()) {
+                cursosSelecionados.add(curso);
+            }
+        }
+
+        // Verifica se existem cursos selecionados
+        if (!cursosSelecionados.isEmpty()) {
+            // Remove os cursos selecionados da lista original
+            cursos.removeAll(cursosSelecionados);
+        } else {
+            // Alerta se não houver cursos selecionados
+            System.out.println("Nenhum curso selecionado para remoção.");
+        }
+    }
 }

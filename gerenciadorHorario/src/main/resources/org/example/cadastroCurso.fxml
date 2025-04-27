@@ -159,7 +159,7 @@
                         </Label>
                     </children>
                 </VBox>
-                <Button fx:id="btnDeletar" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="97.0" style="-fx-background-color: white;" text="Deletar">
+                <Button fx:id="btnDeletar" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="97.0" style="-fx-background-color: white;" text="Deletar" onAction="#deletarCursosSelecionados">
                     <HBox.margin>
                         <Insets left="50.0" top="13.0" />
                     </HBox.margin>
@@ -204,7 +204,7 @@
                         <Insets left="20.0" top="13.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="btnAdicionarCurso" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="173.0" style="-fx-background-color: #0400ff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" text="Adicionar Curso" textFill="WHITE">
+                <Button fx:id="btnAdicionarCurso" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="173.0" style="-fx-background-color: #0400ff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" text="Adicionar Curso" textFill="WHITE" onAction="#abrirPopupCurso">
                     <font>
                         <Font name="Arial Bold" size="14.0" />
                     </font>
@@ -219,6 +219,7 @@
                         <Insets left="30.0" top="13.0" />
                     </HBox.margin>
                 </Button>
+
             </children>
         </HBox>
         <HBox alignment="CENTER_RIGHT" layoutX="238.0" layoutY="14.0" prefHeight="66.0" prefWidth="1132.0" style="-fx-background-color: white;">
