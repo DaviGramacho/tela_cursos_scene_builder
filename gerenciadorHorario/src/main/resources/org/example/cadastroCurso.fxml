@@ -159,7 +159,7 @@
                         </Label>
                     </children>
                 </VBox>
-                <Button fx:id="btnDeletar" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="97.0" style="-fx-background-color: white;" text="Deletar" onAction="#deletarCursosSelecionados">
+                <Button fx:id="btnDeletar" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#deletarCursosSelecionados" prefHeight="35.0" prefWidth="97.0" style="-fx-background-color: white;" text="Deletar">
                     <HBox.margin>
                         <Insets left="50.0" top="13.0" />
                     </HBox.margin>
@@ -174,7 +174,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnFiltro" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="97.0" style="-fx-background-color: white;" text="Filtros">
+                <Button fx:id="btnFiltro" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#abrirPopupFiltro" prefHeight="35.0" prefWidth="97.0" style="-fx-background-color: white;" text="Filtros">
                     <font>
                         <Font name="Arial Bold" size="14.0" />
                     </font>
@@ -204,7 +204,7 @@
                         <Insets left="20.0" top="13.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="btnAdicionarCurso" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="173.0" style="-fx-background-color: #0400ff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" text="Adicionar Curso" textFill="WHITE" onAction="#abrirPopupCurso">
+                <Button fx:id="btnAdicionarCurso" alignment="CENTER" mnemonicParsing="false" onAction="#abrirPopupCurso" prefHeight="35.0" prefWidth="173.0" style="-fx-background-color: #0400ff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" text="Adicionar Curso" textFill="WHITE">
                     <font>
                         <Font name="Arial Bold" size="14.0" />
                     </font>

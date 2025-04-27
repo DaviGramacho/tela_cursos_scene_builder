@@ -154,4 +154,37 @@ public class CadastroCursoController {
             System.out.println("Nenhum curso selecionado para remoção.");
         }
     }
+
+    @FXML
+    private void abrirPopupFiltro() throws IOException {
+        // Carrega o FXML do PopupFiltro
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupFiltro.fxml"));
+        Parent root = loader.load();
+
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Filtrar Cursos");
+
+        Scene scene = new Scene(root);
+        popupStage.setScene(scene);
+
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+
+        popupStage.showAndWait();
+
+        // Depois que o popup fechar, verifica se a ação foi confirmada
+        PopupFiltroController popupController = loader.getController();
+        if (popupController.isConfirmado()) {
+            String turnoSelecionado = popupController.getTurnoSelecionado();
+
+            // Filtra os cursos de acordo com o turno selecionado
+            ObservableList<Curso> cursosFiltrados = FXCollections.observableArrayList();
+            for (Curso curso : cursos) {
+                if (curso.getPeriodo().equals(turnoSelecionado) || curso.getPeriodo().contains(turnoSelecionado)) {
+                    cursosFiltrados.add(curso);
+                }
+            }
+
+            tblViewCurso.setItems(cursosFiltrados);
+        }
+    }
 }
