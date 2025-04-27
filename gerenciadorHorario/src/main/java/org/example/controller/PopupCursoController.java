@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class PopupCursoController {
@@ -19,7 +20,7 @@ public class PopupCursoController {
     private ComboBox<String> comboTurno;
 
     @FXML
-    private ComboBox<String> comboCurso;
+    private TextField txtCurso;  // Alterado para TextField
 
     @FXML
     private Label tituloEscolhaTurno;
@@ -30,18 +31,17 @@ public class PopupCursoController {
 
     @FXML
     private void initialize() {
-        // Preenche os comboboxes
+        // Preenche o ComboBox com os turnos
         comboTurno.getItems().addAll("Matutino", "Noturno", "EaD");
-        comboCurso.getItems().addAll("Análise e Desenvolvimento de Sistemas", "Banco de Dados", "Desenvolvimento de Software Multiplataforma", "Gestão da Produção Industrial", "Gestão Empresarial", "Logística", "Manufatura Avançada");
 
         // Ação do botão Confirmar
         btnConfirmar.setOnAction(event -> {
             turnoSelecionado = comboTurno.getValue();
-            cursoSelecionado = comboCurso.getValue();
+            cursoSelecionado = txtCurso.getText();  // Pega o texto digitado no TextField
 
-            // Verificar se ambos os campos foram selecionados
-            if (turnoSelecionado == null || cursoSelecionado == null) {
-                mostrarAlerta("Por favor, selecione tanto o turno quanto o curso.");
+            // Verificar se ambos os campos foram preenchidos
+            if (turnoSelecionado == null || cursoSelecionado == null || cursoSelecionado.isEmpty()) {
+                mostrarAlerta("Por favor, selecione o turno e digite o nome do curso.");
             } else {
                 confirmado = true;  // Marcar como confirmado
                 fecharPopup();
@@ -80,4 +80,3 @@ public class PopupCursoController {
         return cursoSelecionado;
     }
 }
-

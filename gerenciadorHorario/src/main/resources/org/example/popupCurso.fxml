@@ -10,10 +10,11 @@
 
 <AnchorPane prefHeight="267.0" prefWidth="412.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.PopupCursoController">
    <children>
+      <!-- Troque o ComboBox por um TextField para o Curso -->
+      <TextField fx:id="txtCurso" layoutX="105.0" layoutY="68.0" prefWidth="150.0" promptText="Digite o Curso" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" />
 
+      <!-- Para o Turno, se você ainda quiser manter como ComboBox -->
       <ComboBox fx:id="comboTurno" layoutX="105.0" layoutY="108.0" prefWidth="150.0" promptText="Escolha o Turno" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50; -fx-text-fill: white; -fx-prompt-text-fill: white;" />
-
-      <ComboBox fx:id="comboCurso" layoutX="105.0" layoutY="68.0" prefWidth="150.0" promptText="Escolha o Curso" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" />
 
       <Button fx:id="btnConfirmar" layoutX="104.0" layoutY="163.0" mnemonicParsing="false" style="-fx-background-color: #ffffff; -fx-border-color: #0400ff; -fx-background-radius: 50; -fx-border-radius: 50;" text="Confirmar" textFill="#0400ff">
          <font>
@@ -32,6 +33,5 @@
             <Image url="@img/perfil.png" />
          </image>
       </ImageView>
-
    </children>
 </AnchorPane>
