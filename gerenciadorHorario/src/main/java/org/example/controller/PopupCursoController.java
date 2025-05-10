@@ -20,6 +20,9 @@ public class PopupCursoController {
     private ComboBox<String> comboTurno;
 
     @FXML
+    private ComboBox<String> comboCoordenador;
+
+    @FXML
     private TextField txtCurso;  // Alterado para TextField
 
     @FXML

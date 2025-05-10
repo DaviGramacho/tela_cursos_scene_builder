@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 public class PopupFiltroController {
 
     @FXML
-    private ComboBox<String> comboTurno;
+    private ComboBox<String> comboCoordenador;
 
     @FXML
     private Button btnAplicar;
@@ -23,13 +23,13 @@ public class PopupFiltroController {
     @FXML
     private void initialize() {
         // Preenche a ComboBox com opções
-        comboTurno.getItems().addAll("Matutino", "Noturno", "EaD");
+        comboCoordenador.getItems().addAll("Sabah", "Leonidas");
 
         // Botão Aplicar
         btnAplicar.setOnAction(event -> {
-            turnoSelecionado = comboTurno.getValue();
+            turnoSelecionado = comboCoordenador.getValue();
             if (turnoSelecionado == null) {
-                mostrarAlerta("Por favor, selecione um turno.");
+                mostrarAlerta("Por favor, selecione um Coordenador.");
             } else {
                 confirmado = true;
                 fecharPopup();

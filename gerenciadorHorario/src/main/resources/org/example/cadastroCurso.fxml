@@ -189,21 +189,6 @@
                         <Insets left="20.0" top="13.0" />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="btnExportar" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="149.0" style="-fx-background-color: white; -fx-border-color: gray; -fx-border-radius: 50; -fx-background-radius: 50;" text="Exportar">
-                    <font>
-                        <Font name="Arial Bold" size="14.0" />
-                    </font>
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@img/export.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <HBox.margin>
-                        <Insets left="20.0" top="13.0" />
-                    </HBox.margin>
-                </Button>
                 <Button fx:id="btnAdicionarCurso" alignment="CENTER" mnemonicParsing="false" onAction="#abrirPopupCurso" prefHeight="35.0" prefWidth="173.0" style="-fx-background-color: #0400ff; -fx-border-color: #0400ff; -fx-border-radius: 50; -fx-background-radius: 50;" text="Adicionar Curso" textFill="WHITE">
                     <font>
                         <Font name="Arial Bold" size="14.0" />
@@ -239,12 +224,12 @@
                 </ImageView>
             </children>
         </HBox>
-        <TableView fx:id="tblViewCurso" layoutX="238.0" layoutY="154.0" prefHeight="298.0" prefWidth="1132.0" style="-fx-background-color: white;" editable="true">
+        <TableView fx:id="tblViewCurso" editable="true" layoutX="238.0" layoutY="154.0" prefHeight="298.0" prefWidth="1132.0" style="-fx-background-color: white;">
             <columns>
                 <TableColumn fx:id="tblSelecionarCurso" prefWidth="43.0" text="-" />
                 <TableColumn fx:id="tblIdCurso" prefWidth="143.0" text="ID Curso" />
                 <TableColumn fx:id="tblNomeCurso" minWidth="0.0" prefWidth="420.0" text="Nome do Curso" />
-                <TableColumn fx:id="tblPeriodo" prefWidth="467.20001220703125" text="Período" />
+                <TableColumn fx:id="tblCoordenador" prefWidth="467.20001220703125" text="Coordenador" />
             </columns>
         </TableView>
     </children>

@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.DAO.CursoDAO;
 import org.example.classes.Curso;
 
 import java.io.IOException;
@@ -33,7 +34,9 @@ public class CadastroCursoController {
     private TableColumn<Curso, String> tblNomeCurso;
 
     @FXML
-    private TableColumn<Curso, String> tblPeriodo;
+    private TableColumn<Curso, String> tblCoordenador;
+
+    CursoDAO cursoDAO = new CursoDAO();
 
     private final ObservableList<Curso> cursos = FXCollections.observableArrayList();
     private final FilteredList<Curso> cursosFiltrados = new FilteredList<>(cursos, p -> true);
@@ -47,30 +50,35 @@ public class CadastroCursoController {
     }
 
     private void configurarTabela() {
+
+
         tblSelecionarCurso.setCellValueFactory(cellData -> cellData.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
 
         tblIdCurso.setCellValueFactory(new PropertyValueFactory<>("id"));
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        tblPeriodo.setCellValueFactory(new PropertyValueFactory<>("periodo"));
+        tblCoordenador.setCellValueFactory(new PropertyValueFactory<>("coordenador"));
 
         tblViewCurso.setItems(cursosFiltrados);
     }
 
+
     private void carregarCursosIniciais() {
         cursos.addAll(
-                new Curso(false, 1, "Análise e Desenvolvimento de Sistemas", "Matutino"),
-                new Curso(false, 2, "Banco de Dados", "Noturno"),
-                new Curso(false, 3, "Desenvolvimento de Software Multiplataforma", "Matutino")
+                new Curso(false, 1, "Análise e Desenvolvimento de Sistemas", "Sabah"),
+                new Curso(false, 2, "Banco de Dados", "Leonidas"),
+                new Curso(false, 3, "Desenvolvimento de Software Multiplataforma", "Adicione o coordenador aqui"),
+                new Curso(false, 4, "Redes de Computadores", "Adicione o coordenador aqui"),
+                new Curso(false, 5, "Jogos Digitais", "Adicione o coordenador aqui")
         );
 
-        // Se quiser deixar para debug apenas, comente ou remova depois
         cursos.forEach(curso ->
                 curso.selecionadoProperty().addListener((obs, oldVal, newVal) ->
                         System.out.println("Curso " + curso.getNome() + " " + (newVal ? "selecionado" : "deselecionado"))
                 )
         );
     }
+
 
     @FXML
     private void abrirPopupCurso() throws IOException {
@@ -120,18 +128,19 @@ public class CadastroCursoController {
     private void aplicarFiltro(String turnoSelecionado) {
         filtroAtual = turnoSelecionado.toLowerCase();
         cursosFiltrados.setPredicate(curso ->
-                filtroAtual.isEmpty() || curso.getPeriodo().toLowerCase().contains(filtroAtual)
+                filtroAtual.isEmpty() || curso.getCoordenador().toLowerCase().contains(filtroAtual)
         );
     }
 
     @FXML
     private void deletarCursosSelecionados() {
+
         cursos.removeIf(Curso::isSelecionado);
 
         // Atualiza o filtro, se existir
         if (!filtroAtual.isEmpty()) {
             cursosFiltrados.setPredicate(curso ->
-                    curso.getPeriodo().toLowerCase().contains(filtroAtual)
+                    curso.getCoordenador().toLowerCase().contains(filtroAtual)
             );
         }
     }

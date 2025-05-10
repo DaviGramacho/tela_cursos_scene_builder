@@ -11,13 +11,18 @@ public class Curso {
     private final BooleanProperty selecionado;
     private final IntegerProperty id;
     private final StringProperty nome;
-    private final StringProperty periodo;
+    private final StringProperty coordenador;
 
-    public Curso(boolean selecionado, int id, String nome, String periodo) {
+    public Curso(boolean selecionado, int id, String nome, String coordenador) {
         this.selecionado = new SimpleBooleanProperty(selecionado);
         this.id = new SimpleIntegerProperty(id);
         this.nome = new SimpleStringProperty(nome);
-        this.periodo = new SimpleStringProperty(periodo);
+        this.coordenador = new SimpleStringProperty(coordenador);
+    }
+
+    // Construtor alternativo (sem selecionado, para DAO)
+    public Curso(String nome, String coordenador) {
+        this(false, 0, nome, coordenador);
     }
 
     public boolean isSelecionado() {
@@ -36,6 +41,10 @@ public class Curso {
         return id.get();
     }
 
+    public void setId(long id) {
+        this.id.set((int) id);
+    }
+
     public IntegerProperty idProperty() {
         return id;
     }
@@ -48,11 +57,11 @@ public class Curso {
         return nome;
     }
 
-    public String getPeriodo() {
-        return periodo.get();
+    public String getCoordenador() {
+        return coordenador.get();
     }
 
-    public StringProperty periodoProperty() {
-        return periodo;
+    public StringProperty coordenadorProperty() {
+        return coordenador;
     }
 }

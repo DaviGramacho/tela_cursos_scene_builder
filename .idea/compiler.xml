@@ -9,5 +9,8 @@
         <module name="gerenciadorHorario" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="teste" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
