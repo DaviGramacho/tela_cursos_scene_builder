@@ -134,24 +134,12 @@ public class CadastroCursoController {
         );
     }
 
-    // Deleta todos os cursos que estão marcados com o checkbox
-    @FXML
-    private void deletarCursosSelecionados() {
-        // Pega os IDs dos cursos selecionados
-        List<Long> idsParaExcluir = cursos.stream()
-                .filter(Curso::isSelecionado)
-                .map(c -> Long.valueOf(c.getId()))
-                .collect(Collectors.toList());
-
-        // Deleta cada um do banco de dados
-        idsParaExcluir.forEach(cursoDAO::delete);
-
-        // Remove da lista em memória e reaplica filtro (se houver)
-        cursos.removeIf(Curso::isSelecionado);
-        if (!filtroAtual.isEmpty()) {
-            cursosFiltrados.setPredicate(c -> c.getCoordenador().toLowerCase().contains(filtroAtual));
-        }
-    }
+//    // Deleta todos os cursos que estão marcados com o checkbox
+//    @FXML
+//    private void deletarCursosSelecionados() {
+//        //logica deletar
+//        }
+//    }
 
     // Efeito visual: muda o fundo ao passar o mouse
     @FXML
