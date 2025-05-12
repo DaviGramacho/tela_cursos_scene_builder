@@ -1,5 +1,6 @@
 package org.example.controller;
 
+// Importações JavaFX para interface gráfica
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -14,93 +15,92 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.DAO.CursoDAO;
+
+// Importações do projeto: DAO e modelo
+import org.example.dao.CursoDAO;
 import org.example.classes.Curso;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
+// Controlador da tela de cadastro e gerenciamento de cursos
 public class CadastroCursoController {
 
-    @FXML
-    private TableView<Curso> tblViewCurso;
+    // Elementos da interface FXML (tabela e colunas)
+    @FXML private TableView<Curso> tblViewCurso;
+    @FXML private TableColumn<Curso, Boolean> tblSelecionarCurso;
+    @FXML private TableColumn<Curso, Integer> tblIdCurso;
+    @FXML private TableColumn<Curso, String> tblNomeCurso;
+    @FXML private TableColumn<Curso, String> tblCoordenador;
 
-    @FXML
-    private TableColumn<Curso, Boolean> tblSelecionarCurso;
+    // DAO para interagir com o banco de dados
+    private final CursoDAO cursoDAO = new CursoDAO();
 
-    @FXML
-    private TableColumn<Curso, Integer> tblIdCurso;
-
-    @FXML
-    private TableColumn<Curso, String> tblNomeCurso;
-
-    @FXML
-    private TableColumn<Curso, String> tblCoordenador;
-
-    CursoDAO cursoDAO = new CursoDAO();
-
+    // Lista observável de cursos, com filtro aplicado
     private final ObservableList<Curso> cursos = FXCollections.observableArrayList();
     private final FilteredList<Curso> cursosFiltrados = new FilteredList<>(cursos, p -> true);
 
+    // Armazena o filtro atual aplicado por coordenador
     private String filtroAtual = "";
 
+    // Inicializa a tela: configura a tabela e carrega dados do banco
     @FXML
     public void initialize() {
         configurarTabela();
-        carregarCursosIniciais();
+        carregarCursosDoBanco();
     }
 
+    // Configura como os dados serão exibidos nas colunas da tabela
     private void configurarTabela() {
-
-
-        tblSelecionarCurso.setCellValueFactory(cellData -> cellData.getValue().selecionadoProperty());
+        // Coluna com checkbox de seleção
+        tblSelecionarCurso.setCellValueFactory(cd -> cd.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
 
+        // Demais colunas (id, nome, coordenador)
         tblIdCurso.setCellValueFactory(new PropertyValueFactory<>("id"));
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tblCoordenador.setCellValueFactory(new PropertyValueFactory<>("coordenador"));
 
+        // Define a lista filtrada como fonte de dados da tabela
         tblViewCurso.setItems(cursosFiltrados);
     }
 
-
-    private void carregarCursosIniciais() {
-        cursos.addAll(
-                new Curso(false, 1, "Análise e Desenvolvimento de Sistemas", "Sabah"),
-                new Curso(false, 2, "Banco de Dados", "Leonidas"),
-                new Curso(false, 3, "Desenvolvimento de Software Multiplataforma", "Adicione o coordenador aqui"),
-                new Curso(false, 4, "Redes de Computadores", "Adicione o coordenador aqui"),
-                new Curso(false, 5, "Jogos Digitais", "Adicione o coordenador aqui")
-        );
-
-        cursos.forEach(curso ->
-                curso.selecionadoProperty().addListener((obs, oldVal, newVal) ->
-                        System.out.println("Curso " + curso.getNome() + " " + (newVal ? "selecionado" : "deselecionado"))
-                )
-        );
+    // Carrega os cursos do banco de dados e atualiza a tabela
+    private void carregarCursosDoBanco() {
+        try {
+            cursos.clear(); // limpa lista atual
+            cursos.addAll(cursoDAO.listarTodos()); // adiciona do banco
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar cursos: " + e.getMessage());
+        }
     }
 
-
+    // Abre o popup para adicionar novo curso
     @FXML
     private void abrirPopupCurso() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupCurso.fxml"));
         Parent root = loader.load();
 
+        // Cria nova janela modal
         Stage popupStage = new Stage();
         popupStage.setTitle("Adicionar Curso");
         popupStage.setScene(new Scene(root));
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.showAndWait();
+        popupStage.showAndWait(); // espera o popup ser fechado
 
-        PopupCursoController popupController = loader.getController();
-        if (popupController.isConfirmado()) {
-            String nomeCurso = popupController.getCursoSelecionado();
-            String turnoCurso = popupController.getTurnoSelecionado();
-
-            Curso novoCurso = new Curso(false, cursos.size() + 1, nomeCurso, turnoCurso);
-            cursos.add(novoCurso);
+        // Obtém dados do controller do popup
+        PopupCursoController popupCtrl = loader.getController();
+        if (popupCtrl.isConfirmado()) {
+            // Cria novo curso e salva no banco
+            Curso novo = new Curso(popupCtrl.getCursoSelecionado(), popupCtrl.getCoordenadorSelecionado());
+            cursoDAO.criar(novo);
+            carregarCursosDoBanco(); // atualiza a lista
         }
     }
 
+    // Abre o popup para aplicar ou remover filtros por coordenador
     @FXML
     private void abrirPopupFiltro() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupFiltro.fxml"));
@@ -112,46 +112,56 @@ public class CadastroCursoController {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.showAndWait();
 
-        PopupFiltroController popupController = loader.getController();
-        if (popupController.isConfirmado()) {
-            if (popupController.isLimparFiltro()) {
-                // Se clicou em "Limpar", remove o filtro
+        PopupFiltroController popFiltro = loader.getController();
+        if (popFiltro.isConfirmado()) {
+            if (popFiltro.isLimparFiltro()) {
+                // Limpa o filtro atual
                 filtroAtual = "";
-                cursosFiltrados.setPredicate(curso -> true); // Mostra todos
+                cursosFiltrados.setPredicate(c -> true);
             } else {
-                String turnoSelecionado = popupController.getTurnoSelecionado();
-                aplicarFiltro(turnoSelecionado);
+                // Aplica filtro por coordenador
+                aplicarFiltro(popFiltro.getCoordenadorSelecionado());
             }
         }
     }
 
-    private void aplicarFiltro(String turnoSelecionado) {
-        filtroAtual = turnoSelecionado.toLowerCase();
-        cursosFiltrados.setPredicate(curso ->
-                filtroAtual.isEmpty() || curso.getCoordenador().toLowerCase().contains(filtroAtual)
+    // Aplica filtro na lista de cursos por nome do coordenador
+    private void aplicarFiltro(String coordenador) {
+        filtroAtual = coordenador.toLowerCase(); // filtro em minúsculas
+        cursosFiltrados.setPredicate(c ->
+                filtroAtual.isEmpty() ||
+                        c.getCoordenador().toLowerCase().contains(filtroAtual)
         );
     }
 
+    // Deleta todos os cursos que estão marcados com o checkbox
     @FXML
     private void deletarCursosSelecionados() {
+        // Pega os IDs dos cursos selecionados
+        List<Long> idsParaExcluir = cursos.stream()
+                .filter(Curso::isSelecionado)
+                .map(c -> Long.valueOf(c.getId()))
+                .collect(Collectors.toList());
 
+        // Deleta cada um do banco de dados
+        idsParaExcluir.forEach(cursoDAO::delete);
+
+        // Remove da lista em memória e reaplica filtro (se houver)
         cursos.removeIf(Curso::isSelecionado);
-
-        // Atualiza o filtro, se existir
         if (!filtroAtual.isEmpty()) {
-            cursosFiltrados.setPredicate(curso ->
-                    curso.getCoordenador().toLowerCase().contains(filtroAtual)
-            );
+            cursosFiltrados.setPredicate(c -> c.getCoordenador().toLowerCase().contains(filtroAtual));
         }
     }
 
+    // Efeito visual: muda o fundo ao passar o mouse
     @FXML
-    private void mouseEntrou(MouseEvent mouseEvent) {
-        ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: #eaf2ff;");
+    private void mouseEntrou(MouseEvent e) {
+        ((Region)e.getSource()).setStyle("-fx-background-color: #eaf2ff;");
     }
 
+    // Efeito visual: volta ao normal ao sair o mouse
     @FXML
-    private void mouseSaiu(MouseEvent mouseEvent) {
-        ((Region) mouseEvent.getSource()).setStyle("-fx-background-color: transparent;");
+    private void mouseSaiu(MouseEvent e) {
+        ((Region)e.getSource()).setStyle("-fx-background-color: transparent;");
     }
 }

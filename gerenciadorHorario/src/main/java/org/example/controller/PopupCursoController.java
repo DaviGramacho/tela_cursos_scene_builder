@@ -1,85 +1,100 @@
 package org.example.controller;
 
+// Importações JavaFX para elementos da interface
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+// Importações da aplicação: DAO e modelo
+import org.example.dao.ProfessorDAO;
+import org.example.classes.Professor;
+
+import java.util.List;
+
+// Controlador do popup de cadastro de curso
 public class PopupCursoController {
 
-    @FXML
-    private Button btnConfirmar;
+    // Elementos da interface definidos no FXML
+    @FXML private Button btnConfirmar;
+    @FXML private Button btnCancelar;
+    @FXML private ComboBox<String> comboTurno;
+    @FXML private ComboBox<String> comboCoordenador;
+    @FXML private TextField txtCurso;
 
-    @FXML
-    private Button BtnCancelar;
-
-    @FXML
-    private ComboBox<String> comboTurno;
-
-    @FXML
-    private ComboBox<String> comboCoordenador;
-
-    @FXML
-    private TextField txtCurso;  // Alterado para TextField
-
-    @FXML
-    private Label tituloEscolhaTurno;
-
-    private String turnoSelecionado;
+    // Variáveis para armazenar estado e seleção do usuário
+    private boolean confirmado = false;
     private String cursoSelecionado;
-    private boolean confirmado = false;  // Variável de controle
+    private String coordenadorSelecionado;
 
+    // Método chamado automaticamente ao inicializar o FXML
     @FXML
     private void initialize() {
-        // Preenche o ComboBox com os turnos
-        comboTurno.getItems().addAll("Matutino", "Noturno", "EaD");
+        // Preenche a ComboBox de turnos
+        comboTurno.getItems().addAll("Matutino", "Noturno");
 
-        // Ação do botão Confirmar
-        btnConfirmar.setOnAction(event -> {
-            turnoSelecionado = comboTurno.getValue();
-            cursoSelecionado = txtCurso.getText();  // Pega o texto digitado no TextField
-
-            // Verificar se ambos os campos foram preenchidos
-            if (turnoSelecionado == null || cursoSelecionado == null || cursoSelecionado.isEmpty()) {
-                mostrarAlerta("Por favor, selecione o turno e digite o nome do curso.");
-            } else {
-                confirmado = true;  // Marcar como confirmado
-                fecharPopup();
-            }
-        });
-
-        // Ação do botão Cancelar
-        BtnCancelar.setOnAction(event -> fecharPopup());
+        // Carrega os nomes dos professores para a ComboBox de coordenadores
+        carregarCoordenadores();
     }
 
-    // Método para mostrar um alerta
-    private void mostrarAlerta(String mensagem) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Campos Incompletos");
-        alert.setHeaderText(null);
-        alert.setContentText(mensagem);
+    // Busca os professores do banco de dados e adiciona à ComboBox
+    private void carregarCoordenadores() {
+        try {
+            List<Professor> profs = new ProfessorDAO().buscarProfessores();
+            profs.forEach(p -> comboCoordenador.getItems().add(p.getNomeProfessor()));
+        } catch (Exception e) {
+            exibirErro("Erro ao carregar coordenadores: " + e.getMessage());
+        }
+    }
+
+    // Ação do botão Confirmar
+    @FXML
+    private void Confirmar() {
+        cursoSelecionado = txtCurso.getText();
+        coordenadorSelecionado = comboCoordenador.getValue();
+
+        // Valida se o nome do curso foi preenchido
+        if (cursoSelecionado == null || cursoSelecionado.isEmpty()) {
+            exibirErro("Nome do curso obrigatório!");
+            return;
+        }
+
+        // Valida se um coordenador foi selecionado
+        if (coordenadorSelecionado == null) {
+            exibirErro("Selecione um coordenador!");
+            return;
+        }
+
+        // Marca como confirmado e fecha a janela
+        confirmado = true;
+        fecharPopup();
+    }
+
+    // Ação do botão Cancelar
+    @FXML
+    private void cancelar() {
+        fecharPopup();
+    }
+
+    // Exibe uma janela de erro com a mensagem fornecida
+    private void exibirErro(String msg) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
         alert.showAndWait();
     }
 
-    // Método para fechar o popup
+    // Fecha o popup atual
     private void fecharPopup() {
         Stage stage = (Stage) btnConfirmar.getScene().getWindow();
         stage.close();
     }
 
-    // Método que retorna se a ação foi confirmada
-    public boolean isConfirmado() {
+    // Métodos públicos para obter os dados selecionados
+    public boolean isConfirmado(){
         return confirmado;
     }
-
-    public String getTurnoSelecionado() {
-        return turnoSelecionado;
-    }
-
-    public String getCursoSelecionado() {
+    public String getCursoSelecionado(){
         return cursoSelecionado;
+    }
+    public String getCoordenadorSelecionado(){
+        return coordenadorSelecionado;
     }
 }
