@@ -60,11 +60,11 @@ public class CursoDAO {
             // Para cada linha do resultado...
             while (rs.next()) {
                 Curso c = new Curso(
-                        // Pega os dados do banco e constrói o objeto Curso
-                        rs.getBoolean("deletado"),      // campo usado como selecionado para a tabela
-                        rs.getLong("id_curso"),         // id do curso
-                        rs.getString("nome"),           // nome do curso
-                        rs.getString("coordenador")     // nome do coordenador
+                        false,                          // sempre começa com não selecionado
+                        rs.getLong("id_curso"),
+                        rs.getString("nome"),
+                        rs.getString("coordenador"),
+                        rs.getBoolean("deletado")       // esse é o valor que vem do banco
                 );
                 lista.add(c); // adiciona à lista
             }
@@ -83,8 +83,18 @@ public class CursoDAO {
      *    UPDATE curso SET deletado = 1 WHERE id_curso = ?
      */
     public void delete(long id) {
-        System.out.println("deletar");
+        String sql = "UPDATE curso SET deletado = 1 WHERE id_curso = ?";
 
-        //colocar a logica de deletar aqui
+        try (
+                Connection con = Conexao.conectar();
+                PreparedStatement stmt = con.prepareStatement(sql)
+        ) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+            System.out.println("Curso marcado como deletado com sucesso.");
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar curso: " + e.getMessage());
+        }
     }
+
 }

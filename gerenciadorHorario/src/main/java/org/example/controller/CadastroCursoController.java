@@ -54,18 +54,22 @@ public class CadastroCursoController {
 
     // Configura como os dados serão exibidos nas colunas da tabela
     private void configurarTabela() {
-        // Coluna com checkbox de seleção
+        tblViewCurso.setEditable(true);
+        tblSelecionarCurso.setEditable(true);
+
+        // Checkbox
         tblSelecionarCurso.setCellValueFactory(cd -> cd.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
 
-        // Demais colunas (id, nome, coordenador)
+        // Outras colunas
         tblIdCurso.setCellValueFactory(new PropertyValueFactory<>("id"));
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tblCoordenador.setCellValueFactory(new PropertyValueFactory<>("coordenador"));
 
-        // Define a lista filtrada como fonte de dados da tabela
+        // Dados da tabela
         tblViewCurso.setItems(cursosFiltrados);
     }
+
 
     // Carrega os cursos do banco de dados e atualiza a tabela
     private void carregarCursosDoBanco() {
@@ -134,12 +138,45 @@ public class CadastroCursoController {
         );
     }
 
-//    // Deleta todos os cursos que estão marcados com o checkbox
-//    @FXML
-//    private void deletarCursosSelecionados() {
-//        //logica deletar
-//        }
-//    }
+    // Deleta todos os cursos que estão marcados com o checkbox
+    @FXML
+    private void deletarCursosSelecionados() {
+        // Verifica se algum curso está selecionado
+        boolean algumSelecionado = cursos.stream().anyMatch(Curso::isSelecionado);
+
+        if (!algumSelecionado) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Atenção");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Selecione ao menos um curso para deletar.");
+            alerta.showAndWait();
+            return;
+        }
+
+        // Mostra um alerta de confirmação
+        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacao.setTitle("Confirmação");
+        confirmacao.setHeaderText("Deletar curso(s)");
+        confirmacao.setContentText("Tem certeza que deseja excluir os cursos selecionados?");
+        confirmacao.initModality(Modality.APPLICATION_MODAL);
+
+        // Aguarda resposta do usuário
+        confirmacao.showAndWait().ifPresent(resposta -> {
+            if (resposta == ButtonType.OK) {
+                // Para cada curso selecionado, chama o método delete no banco
+                List<Curso> cursosParaDeletar = cursos.stream()
+                        .filter(Curso::isSelecionado)
+                        .collect(Collectors.toList());
+
+                for (Curso curso : cursosParaDeletar) {
+                    cursoDAO.delete(curso.getId()); // soft delete no banco
+                }
+
+                // Recarrega os cursos do banco após deletar
+                carregarCursosDoBanco();
+            }
+        });
+    }
 
     // Efeito visual: muda o fundo ao passar o mouse
     @FXML
@@ -153,3 +190,6 @@ public class CadastroCursoController {
         ((Region)e.getSource()).setStyle("-fx-background-color: transparent;");
     }
 }
+
+
+
