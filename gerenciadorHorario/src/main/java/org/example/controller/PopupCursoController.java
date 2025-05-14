@@ -1,100 +1,86 @@
 package org.example.controller;
 
-// Importações JavaFX para elementos da interface
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-
-// Importações da aplicação: DAO e modelo
 import org.example.dao.ProfessorDAO;
 import org.example.classes.Professor;
 
 import java.util.List;
 
-// Controlador do popup de cadastro de curso
 public class PopupCursoController {
 
-    // Elementos da interface definidos no FXML
+    @FXML private TextField txtNomeCurso;
+    @FXML private ComboBox<String> comboCoordenador;
+    @FXML private ComboBox<String> comboPeriodo;
     @FXML private Button btnConfirmar;
     @FXML private Button btnCancelar;
-    @FXML private ComboBox<String> comboTurno;
-    @FXML private ComboBox<String> comboCoordenador;
-    @FXML private TextField txtCurso;
 
-    // Variáveis para armazenar estado e seleção do usuário
     private boolean confirmado = false;
-    private String cursoSelecionado;
-    private String coordenadorSelecionado;
 
-    // Método chamado automaticamente ao inicializar o FXML
     @FXML
     private void initialize() {
-        // Preenche a ComboBox de turnos
-        comboTurno.getItems().addAll("Matutino", "Noturno");
-
-        // Carrega os nomes dos professores para a ComboBox de coordenadores
-        carregarCoordenadores();
-    }
-
-    // Busca os professores do banco de dados e adiciona à ComboBox
-    private void carregarCoordenadores() {
         try {
             List<Professor> profs = new ProfessorDAO().buscarProfessores();
-            profs.forEach(p -> comboCoordenador.getItems().add(p.getNomeProfessor()));
+            for (Professor p : profs) {
+                comboCoordenador.getItems().add(p.getNomeProfessor());
+            }
+
+            // Adiciona opções de período
+            comboPeriodo.getItems().addAll("Matutino", "Noturno" );
+
         } catch (Exception e) {
-            exibirErro("Erro ao carregar coordenadores: " + e.getMessage());
+            exibirErro("Erro ao carregar dados: " + e.getMessage());
         }
     }
 
-    // Ação do botão Confirmar
     @FXML
-    private void Confirmar() {
-        cursoSelecionado = txtCurso.getText();
-        coordenadorSelecionado = comboCoordenador.getValue();
-
-        // Valida se o nome do curso foi preenchido
-        if (cursoSelecionado == null || cursoSelecionado.isEmpty()) {
-            exibirErro("Nome do curso obrigatório!");
+    private void confirmar() {
+        if (txtNomeCurso.getText().isEmpty() || comboCoordenador.getValue() == null || comboPeriodo.getValue() == null) {
+            exibirErro("Preencha todos os campos!");
             return;
         }
 
-        // Valida se um coordenador foi selecionado
-        if (coordenadorSelecionado == null) {
-            exibirErro("Selecione um coordenador!");
-            return;
-        }
-
-        // Marca como confirmado e fecha a janela
         confirmado = true;
-        fecharPopup();
+        fechar();
     }
 
-    // Ação do botão Cancelar
     @FXML
     private void cancelar() {
-        fecharPopup();
+        confirmado = false;
+        fechar();
     }
 
-    // Exibe uma janela de erro com a mensagem fornecida
     private void exibirErro(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 
-    // Fecha o popup atual
-    private void fecharPopup() {
+    private void fechar() {
         Stage stage = (Stage) btnConfirmar.getScene().getWindow();
         stage.close();
     }
 
-    // Métodos públicos para obter os dados selecionados
-    public boolean isConfirmado(){
+    // Getters
+    public boolean isConfirmado() {
         return confirmado;
     }
-    public String getCursoSelecionado(){
-        return cursoSelecionado;
+
+    public String getCursoSelecionado() {
+        return txtNomeCurso.getText();
     }
-    public String getCoordenadorSelecionado(){
-        return coordenadorSelecionado;
+
+    public String getCoordenadorSelecionado() {
+        return comboCoordenador.getValue();
+    }
+
+    public String getPeriodoSelecionado() {
+        return comboPeriodo.getValue();
     }
 }

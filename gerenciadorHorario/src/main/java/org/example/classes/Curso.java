@@ -1,37 +1,32 @@
 package org.example.classes;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 
-/**
- * Representa um Curso com propriedades JavaFX para binding em TableView.
- */
 public class Curso {
     private final BooleanProperty selecionado;
     private final IntegerProperty id;
     private final StringProperty nome;
     private final StringProperty coordenador;
+    private final StringProperty periodo;
     private boolean deletado;
 
-    // Construtor completo (usado na listagem do banco)
-    public Curso(boolean selecionado, long id, String nome, String coordenador, boolean deletado) {
+    // Construtor completo
+    public Curso(boolean selecionado, long id, String nome, String coordenador, String periodo, boolean deletado) {
         this.selecionado = new SimpleBooleanProperty(selecionado);
         this.id = new SimpleIntegerProperty((int) id);
         this.nome = new SimpleStringProperty(nome);
         this.coordenador = new SimpleStringProperty(coordenador);
+        this.periodo = new SimpleStringProperty(periodo);
         this.deletado = deletado;
     }
 
-    // Construtor para novo curso (antes de persistir)
-    public Curso(String nome, String coordenador) {
-        this(false, 0L, nome, coordenador, false);
+    // Construtor para novo curso
+    public Curso(String nome, String coordenador, String periodo) {
+        this(false, 0L, nome, coordenador, periodo, false);
     }
 
-    // --- selecionado ---
+    // Getters e setters
+
     public boolean isSelecionado() {
         return selecionado.get();
     }
@@ -44,16 +39,6 @@ public class Curso {
         return selecionado;
     }
 
-    // --- deletado ---
-    public void setDeletado(boolean deletado) {
-        this.deletado = deletado;
-    }
-
-    public boolean isDeletado() {
-        return deletado;
-    }
-
-    // --- id ---
     public int getId() {
         return id.get();
     }
@@ -66,7 +51,6 @@ public class Curso {
         return id;
     }
 
-    // --- nome ---
     public String getNome() {
         return nome.get();
     }
@@ -79,7 +63,6 @@ public class Curso {
         return nome;
     }
 
-    // --- coordenador ---
     public String getCoordenador() {
         return coordenador.get();
     }
@@ -90,5 +73,25 @@ public class Curso {
 
     public StringProperty coordenadorProperty() {
         return coordenador;
+    }
+
+    public String getPeriodo() {
+        return periodo.get();
+    }
+
+    public void setPeriodo(String periodo) {
+        this.periodo.set(periodo);
+    }
+
+    public StringProperty periodoProperty() {
+        return periodo;
+    }
+
+    public boolean isDeletado() {
+        return deletado;
+    }
+
+    public void setDeletado(boolean deletado) {
+        this.deletado = deletado;
     }
 }

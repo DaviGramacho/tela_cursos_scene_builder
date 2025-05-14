@@ -198,8 +198,8 @@
                 <TableColumn fx:id="tblSelecionarCurso" prefWidth="43.99998474121094" text="-" />
                 <TableColumn fx:id="tblIdCurso" prefWidth="143.0" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 0 0 10;" text="ID Curso" />
                 <TableColumn fx:id="tblNomeCurso" minWidth="0.0" prefWidth="419.1999206542969" text="Nome do Curso" />
-                <TableColumn fx:id="tblCoordenador" prefWidth="467.20001220703125" text="Coordenador" />
-                <TableColumn minWidth="0.0" prefWidth="103.20004882812509" />
+                <TableColumn fx:id="tblCoordenador" prefWidth="312.0" text="Coordenador" />
+                <TableColumn fx:id="tblPeriodo" minWidth="0.0" prefWidth="260.0" text="Periodo" />
             </columns>
         </TableView>
     </children>

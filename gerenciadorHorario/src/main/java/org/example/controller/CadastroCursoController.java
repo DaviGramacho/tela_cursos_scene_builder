@@ -1,6 +1,5 @@
 package org.example.controller;
 
-// Importações JavaFX para interface gráfica
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -15,8 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-// Importações do projeto: DAO e modelo
 import org.example.dao.CursoDAO;
 import org.example.classes.Curso;
 
@@ -25,86 +22,89 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Controlador da tela de cadastro e gerenciamento de cursos
 public class CadastroCursoController {
 
-    // Elementos da interface FXML (tabela e colunas)
     @FXML private TableView<Curso> tblViewCurso;
     @FXML private TableColumn<Curso, Boolean> tblSelecionarCurso;
     @FXML private TableColumn<Curso, Integer> tblIdCurso;
     @FXML private TableColumn<Curso, String> tblNomeCurso;
     @FXML private TableColumn<Curso, String> tblCoordenador;
+    @FXML private TableColumn<Curso, String> tblPeriodo;
 
-    // DAO para interagir com o banco de dados
     private final CursoDAO cursoDAO = new CursoDAO();
-
-    // Lista observável de cursos, com filtro aplicado
     private final ObservableList<Curso> cursos = FXCollections.observableArrayList();
     private final FilteredList<Curso> cursosFiltrados = new FilteredList<>(cursos, p -> true);
-
-    // Armazena o filtro atual aplicado por coordenador
     private String filtroAtual = "";
 
-    // Inicializa a tela: configura a tabela e carrega dados do banco
     @FXML
     public void initialize() {
         configurarTabela();
         carregarCursosDoBanco();
     }
 
-    // Configura como os dados serão exibidos nas colunas da tabela
     private void configurarTabela() {
         tblViewCurso.setEditable(true);
         tblSelecionarCurso.setEditable(true);
 
-        // Checkbox
         tblSelecionarCurso.setCellValueFactory(cd -> cd.getValue().selecionadoProperty());
         tblSelecionarCurso.setCellFactory(CheckBoxTableCell.forTableColumn(tblSelecionarCurso));
 
-        // Outras colunas
         tblIdCurso.setCellValueFactory(new PropertyValueFactory<>("id"));
         tblNomeCurso.setCellValueFactory(new PropertyValueFactory<>("nome"));
         tblCoordenador.setCellValueFactory(new PropertyValueFactory<>("coordenador"));
+        tblPeriodo.setCellValueFactory(new PropertyValueFactory<>("periodo"));
 
-        // Dados da tabela
         tblViewCurso.setItems(cursosFiltrados);
     }
 
-
-    // Carrega os cursos do banco de dados e atualiza a tabela
     private void carregarCursosDoBanco() {
         try {
-            cursos.clear(); // limpa lista atual
-            cursos.addAll(cursoDAO.listarTodos()); // adiciona do banco
+            cursos.clear();
+            cursos.addAll(cursoDAO.listarTodos());
         } catch (SQLException e) {
             System.err.println("Erro ao carregar cursos: " + e.getMessage());
         }
     }
 
-    // Abre o popup para adicionar novo curso
     @FXML
     private void abrirPopupCurso() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupCurso.fxml"));
         Parent root = loader.load();
 
-        // Cria nova janela modal
         Stage popupStage = new Stage();
         popupStage.setTitle("Adicionar Curso");
         popupStage.setScene(new Scene(root));
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.showAndWait(); // espera o popup ser fechado
+        popupStage.showAndWait();
 
-        // Obtém dados do controller do popup
         PopupCursoController popupCtrl = loader.getController();
+
         if (popupCtrl.isConfirmado()) {
-            // Cria novo curso e salva no banco
-            Curso novo = new Curso(popupCtrl.getCursoSelecionado(), popupCtrl.getCoordenadorSelecionado());
+            String coordenadorSelecionado = popupCtrl.getCoordenadorSelecionado();
+
+            // Verifica se o coordenador já está atribuído a algum curso
+            boolean coordenadorJaUtilizado = cursos.stream()
+                    .anyMatch(c -> c.getCoordenador().equalsIgnoreCase(coordenadorSelecionado.trim()));
+
+            if (coordenadorJaUtilizado) {
+                Alert alerta = new Alert(Alert.AlertType.ERROR);
+                alerta.setTitle("Coordenador já atribuído");
+                alerta.setHeaderText(null);
+                alerta.setContentText("O coordenador '" + coordenadorSelecionado + "' já está vinculado a outro curso.");
+                alerta.showAndWait();
+                return;
+            }
+
+            Curso novo = new Curso(
+                    popupCtrl.getCursoSelecionado(),
+                    coordenadorSelecionado,
+                    popupCtrl.getPeriodoSelecionado()
+            );
             cursoDAO.criar(novo);
-            carregarCursosDoBanco(); // atualiza a lista
+            carregarCursosDoBanco();
         }
     }
 
-    // Abre o popup para aplicar ou remover filtros por coordenador
     @FXML
     private void abrirPopupFiltro() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/PopupFiltro.fxml"));
@@ -119,29 +119,24 @@ public class CadastroCursoController {
         PopupFiltroController popFiltro = loader.getController();
         if (popFiltro.isConfirmado()) {
             if (popFiltro.isLimparFiltro()) {
-                // Limpa o filtro atual
                 filtroAtual = "";
                 cursosFiltrados.setPredicate(c -> true);
             } else {
-                // Aplica filtro por coordenador
                 aplicarFiltro(popFiltro.getCoordenadorSelecionado());
             }
         }
     }
 
-    // Aplica filtro na lista de cursos por nome do coordenador
     private void aplicarFiltro(String coordenador) {
-        filtroAtual = coordenador.toLowerCase(); // filtro em minúsculas
+        filtroAtual = coordenador.toLowerCase();
         cursosFiltrados.setPredicate(c ->
                 filtroAtual.isEmpty() ||
                         c.getCoordenador().toLowerCase().contains(filtroAtual)
         );
     }
 
-    // Deleta todos os cursos que estão marcados com o checkbox
     @FXML
     private void deletarCursosSelecionados() {
-        // Verifica se algum curso está selecionado
         boolean algumSelecionado = cursos.stream().anyMatch(Curso::isSelecionado);
 
         if (!algumSelecionado) {
@@ -153,43 +148,34 @@ public class CadastroCursoController {
             return;
         }
 
-        // Mostra um alerta de confirmação
         Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacao.setTitle("Confirmação");
         confirmacao.setHeaderText("Deletar curso(s)");
         confirmacao.setContentText("Tem certeza que deseja excluir os cursos selecionados?");
         confirmacao.initModality(Modality.APPLICATION_MODAL);
 
-        // Aguarda resposta do usuário
         confirmacao.showAndWait().ifPresent(resposta -> {
             if (resposta == ButtonType.OK) {
-                // Para cada curso selecionado, chama o método delete no banco
                 List<Curso> cursosParaDeletar = cursos.stream()
                         .filter(Curso::isSelecionado)
                         .collect(Collectors.toList());
 
                 for (Curso curso : cursosParaDeletar) {
-                    cursoDAO.delete(curso.getId()); // soft delete no banco
+                    cursoDAO.delete(curso.getId());
                 }
 
-                // Recarrega os cursos do banco após deletar
                 carregarCursosDoBanco();
             }
         });
     }
 
-    // Efeito visual: muda o fundo ao passar o mouse
     @FXML
     private void mouseEntrou(MouseEvent e) {
-        ((Region)e.getSource()).setStyle("-fx-background-color: #eaf2ff;");
+        ((Region) e.getSource()).setStyle("-fx-background-color: #eaf2ff;");
     }
 
-    // Efeito visual: volta ao normal ao sair o mouse
     @FXML
     private void mouseSaiu(MouseEvent e) {
-        ((Region)e.getSource()).setStyle("-fx-background-color: transparent;");
+        ((Region) e.getSource()).setStyle("-fx-background-color: transparent;");
     }
 }
-
-
-
